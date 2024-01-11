@@ -1,9 +1,3 @@
-# generate generation_pb2_grpc.py using:
-#
-#   python -m grpc_tools.protoc -I proto --python_out=. --pyi_out=. --grpc_python_out=. path/to/text-generation-inference/proto/generation.proto
-#
-# get the protos from https://github.com/opendatahub-io/text-generation-inference/
-
 from typing import Optional, Union
 
 import grpc
@@ -175,9 +169,12 @@ class GrpcClient:
 
 
 if __name__ == "__main__":
+    host = "flan-t5-small-predictor-caikit-testing.apps.aisrhods-wx.8goc.p1.openshiftapps.com"
+    port = (443,)
+    print(f"connecting to {host=}:{port}")
     client = GrpcClient(
-        "flan-t5-small-predictor-caikit-testing.apps.aisrhods-wx.8goc.p1.openshiftapps.com",
-        443,
+        host,
+        port,
         verify=False,
     )
 
