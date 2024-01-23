@@ -37,3 +37,7 @@ python inference.py # runs inference
 ```
 
 See Introduction section for help regarding python stubs generation.
+
+### Notebooks
+
+untested
