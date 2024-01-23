@@ -169,13 +169,16 @@ class GrpcClient:
 
 
 if __name__ == "__main__":
-    host = "flan-t5-small-predictor-caikit-testing.apps.aisrhods-wx.8goc.p1.openshiftapps.com"
-    port = (443,)
+    # host = "flan-t5-small-predictor-caikit-testing.apps.aisrhods-wx.8goc.p1.openshiftapps.com"
+    # port = 443
+    host = "localhost"
+    port = 8033
     print(f"connecting to {host=}:{port}")
     client = GrpcClient(
         host,
         port,
-        verify=False,
+        insecure=True,
+        # verify=False,
     )
 
     client.make_request("this is the query text", model_id="flan-t5-small")
