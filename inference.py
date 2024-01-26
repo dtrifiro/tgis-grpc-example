@@ -163,6 +163,9 @@ class GrpcClient:
                 certificate_chain=client_cert_bytes,
             )
         elif verify is False:
+            print(
+                f"insecure mode: trusting remote certificate from {host}:{port}",
+            )
             cert = get_server_certificate(host, port).encode()
             credentials_kwargs.update(root_certificates=cert)
 
