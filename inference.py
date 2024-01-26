@@ -57,13 +57,37 @@ class GrpcClient:
             self._channel
         )
 
-    def make_request(self, text: str, model_id: str = "flan-t5-small"):
+    def make_request(self, texts: str, model_id: str = "flan-t5-small"):
         request = generation_pb2_grpc.generation__pb2.BatchedGenerationRequest(
             model_id=model_id,
-            requests=[generation_pb2_grpc.generation__pb2.GenerationRequest(text=text)],
+            requests=[generation_pb2_grpc.generation__pb2.GenerationRequest(text=text) for text in texts],
+            params=generation_pb2_grpc.generation__pb2.Parameters(
+                   method=generation_pb2_grpc.generation__pb2.GREEDY,
+                   stopping=generation_pb2_grpc.generation__pb2.StoppingCriteria(
+                       max_new_tokens=128,
+                       min_new_tokens=1
+                   )
+            )
         )
         result = self.generation_service_stub.Generate(request=request)
-        print(result)
+        return result
+    
+    def make_request_stream(self, text: str, model_id: str = "flan-t5-small"):
+        request = generation_pb2_grpc.generation__pb2.SingleGenerationRequest(
+            model_id=model_id,
+            request=generation_pb2_grpc.generation__pb2.GenerationRequest(text=text),
+            params=generation_pb2_grpc.generation__pb2.Parameters(
+                   method=generation_pb2_grpc.generation__pb2.GREEDY,
+                   stopping=generation_pb2_grpc.generation__pb2.StoppingCriteria(
+                       max_new_tokens=128,
+                       min_new_tokens=1
+                   ),
+                   response=generation_pb2_grpc.generation__pb2.ResponseOptions(
+                       generated_tokens=True
+                   )
+            )
+        )
+        result = self.generation_service_stub.GenerateStream(request=request)
         return result
 
     def __enter__(self):
@@ -139,10 +163,6 @@ class GrpcClient:
                 certificate_chain=client_cert_bytes,
             )
         elif verify is False:
-            print(
-                f"insecure mode: trusting remote certificate from {host}:{port}",
-            )
-
             cert = get_server_certificate(host, port).encode()
             credentials_kwargs.update(root_certificates=cert)
 
@@ -181,4 +201,4 @@ if __name__ == "__main__":
         # verify=False,
     )
 
-    client.make_request("this is the query text", model_id="flan-t5-small")
+    print(client.make_request(["this is the query text"], model_id="flan-t5-small"))
