@@ -33,8 +33,10 @@ python -m venv .venv
 source .venv/bin/activate
 
 pip install grpcio-tools
-python inference.py # runs inference
+python inference.py # defines requests and runs basic inference example
 ```
+
+For more examples involving batch generation or streaming, see/run `grpc_query.py`
 
 See Introduction section for help regarding python stubs generation.
 
